@@ -1,6 +1,6 @@
 {
-  "versionCode": 13,
-  "versionName": "0.8.0",
-  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.8.0.apk",
-  "notes": "Added an admin panel for moderation — only visible on the founder's account, lists every profile and lets you remove one with confirmation."
+  "versionCode": 14,
+  "versionName": "0.9.0",
+  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.9.0.apk",
+  "notes": "Real app icon! Replaced the default placeholder icon with the actual Ally logo, both as a standard icon and a proper adaptive icon for modern phone launchers."
 }
