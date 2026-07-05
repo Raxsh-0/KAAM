@@ -1,6 +1,6 @@
 {
-  "versionCode": 6,
-  "versionName": "0.3.1",
-  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.3.1.apk",
-  "notes": "Fixed sign-in hanging forever on a slow connection — now times out with a clear message."
+  "versionCode": 8,
+  "versionName": "0.4.1",
+  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.4.1.apk",
+  "notes": "Added email/password sign-in and sign-up alongside Google. Fixed profile save hanging forever if Firestore is unreachable."
 }

@@ -7,6 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.FirebaseUser
 import com.kindred.core.data.AuthRepository
 import com.kindred.core.data.MockDatingRepository
 import com.kindred.core.data.ProfileRepository
@@ -41,45 +46,83 @@ class AuthViewModel @Inject constructor(
 
     /** Launches the Google account picker and signs the chosen account into Firebase. */
     fun signInWithGoogle(activityContext: Context) {
+        runAuth {
+            val webClientId = activityContext.getString(
+                activityContext.resources.getIdentifier(
+                    "default_web_client_id", "string", activityContext.packageName
+                )
+            )
+            val request = GetCredentialRequest.Builder()
+                .addCredentialOption(
+                    GetGoogleIdOption.Builder()
+                        .setServerClientId(webClientId)
+                        .setFilterByAuthorizedAccounts(false)
+                        .build()
+                )
+                .build()
+            val result = withTimeout(25_000) {
+                CredentialManager.create(activityContext).getCredential(activityContext, request)
+            }
+            val googleCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
+            val user = withTimeout(20_000) {
+                authRepository.signInWithGoogleIdToken(googleCredential.idToken)
+            }
+            hydrateProfile(user, fallbackName = user.displayName ?: "You")
+        }
+    }
+
+    fun signUpWithEmail(name: String, email: String, password: String) {
+        runAuth {
+            val user = withTimeout(20_000) { authRepository.signUpWithEmail(email.trim(), password) }
+            hydrateProfile(user, fallbackName = name.ifBlank { "You" }, forceCreate = true)
+        }
+    }
+
+    fun signInWithEmail(email: String, password: String) {
+        runAuth {
+            val user = withTimeout(20_000) { authRepository.signInWithEmail(email.trim(), password) }
+            hydrateProfile(user, fallbackName = "You")
+        }
+    }
+
+    /**
+     * Firestore is best-effort here: a broken/misconfigured backend must never block sign-in,
+     * so every call is time-boxed and failures just fall back to a local-only profile.
+     */
+    private suspend fun hydrateProfile(user: FirebaseUser, fallbackName: String, forceCreate: Boolean = false) {
+        suspend fun trySave(profile: OwnProfile) =
+            runCatching { withTimeout(8_000) { profileRepository.save(user.uid, profile) } }
+
+        val profile = if (forceCreate) {
+            OwnProfile(name = fallbackName).also { trySave(it) }
+        } else {
+            val loaded = runCatching { withTimeout(8_000) { profileRepository.load(user.uid) } }.getOrNull()
+            loaded ?: OwnProfile(name = fallbackName).also { trySave(it) }
+        }
+        localState.ownProfile.value = profile
+    }
+
+    private fun runAuth(block: suspend () -> Unit) {
         if (_state.value == AuthUiState.Loading) return
         _state.value = AuthUiState.Loading
         viewModelScope.launch {
             try {
-                val webClientId = activityContext.getString(
-                    activityContext.resources.getIdentifier(
-                        "default_web_client_id", "string", activityContext.packageName
-                    )
-                )
-                val request = GetCredentialRequest.Builder()
-                    .addCredentialOption(
-                        GetGoogleIdOption.Builder()
-                            .setServerClientId(webClientId)
-                            .setFilterByAuthorizedAccounts(false)
-                            .build()
-                    )
-                    .build()
-                val result = withTimeout(25_000) {
-                    CredentialManager.create(activityContext).getCredential(activityContext, request)
-                }
-                val googleCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
-                val user = withTimeout(20_000) {
-                    authRepository.signInWithGoogleIdToken(googleCredential.idToken)
-                }
-
-                // Pull the saved profile, or create one from the Google account on first sign-in.
-                val profile = runCatching { profileRepository.load(user.uid) }.getOrNull()
-                    ?: OwnProfile(name = user.displayName ?: "You").also {
-                        runCatching { profileRepository.save(user.uid, it) }
-                    }
-                localState.ownProfile.value = profile
-
+                block()
                 _state.value = AuthUiState.SignedIn
             } catch (e: TimeoutCancellationException) {
-                _state.value = AuthUiState.Error("Sign-in timed out. Check your connection and try again.")
+                _state.value = AuthUiState.Error("Timed out. Check your connection and try again.")
             } catch (e: Exception) {
-                _state.value = AuthUiState.Error(e.message ?: "Sign-in failed. Try again.")
+                _state.value = AuthUiState.Error(friendlyMessage(e))
             }
         }
+    }
+
+    private fun friendlyMessage(e: Exception): String = when (e) {
+        is FirebaseAuthWeakPasswordException -> "Password is too weak — use at least 6 characters."
+        is FirebaseAuthInvalidCredentialsException -> "That email or password looks wrong."
+        is FirebaseAuthUserCollisionException -> "An account with that email already exists — try signing in instead."
+        is FirebaseAuthInvalidUserException -> "No account found with that email."
+        else -> e.message ?: "Something went wrong. Try again."
     }
 
     fun clearError() {

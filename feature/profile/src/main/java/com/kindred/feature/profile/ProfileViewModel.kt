@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
 
 sealed interface SaveState {
     data object Idle : SaveState
@@ -53,8 +55,10 @@ class ProfileViewModel @Inject constructor(
         _saveState.value = SaveState.Saving
         viewModelScope.launch {
             _saveState.value = try {
-                profileRepository.save(uid, localState.ownProfile.value)
+                withTimeout(10_000) { profileRepository.save(uid, localState.ownProfile.value) }
                 SaveState.Saved
+            } catch (e: TimeoutCancellationException) {
+                SaveState.Failed("Timed out. Check your connection and try again.")
             } catch (e: Exception) {
                 SaveState.Failed(e.message ?: "Couldn't save. Check your connection.")
             }

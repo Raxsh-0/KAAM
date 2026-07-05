@@ -23,6 +23,16 @@ class AuthRepository @Inject constructor() {
         return checkNotNull(result.user) { "Firebase returned no user" }
     }
 
+    suspend fun signUpWithEmail(email: String, password: String): FirebaseUser {
+        val result = auth.createUserWithEmailAndPassword(email, password).await()
+        return checkNotNull(result.user) { "Firebase returned no user" }
+    }
+
+    suspend fun signInWithEmail(email: String, password: String): FirebaseUser {
+        val result = auth.signInWithEmailAndPassword(email, password).await()
+        return checkNotNull(result.user) { "Firebase returned no user" }
+    }
+
     fun signOut() {
         auth.signOut()
     }
