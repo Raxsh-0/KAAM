@@ -1,6 +1,6 @@
-# KAAM
+# Ally
 
-App display name: **KAAM** · applicationId: `com.kaam.app` · internal code keeps the
+App display name: **Ally** (previously KAAM) · applicationId: `com.kaam.app` · internal code keeps the
 "Kindred" codename (class names, module packages) — cosmetic only, not user-visible.
 
 Android dating app for open-minded people. Product decisions, feature phases, data model,

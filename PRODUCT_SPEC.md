@@ -1,4 +1,4 @@
-# Product Spec — KAAM (formerly working title "Kindred")
+# Product Spec — Ally (formerly KAAM, working title "Kindred")
 
 *Open-minded dating app for Android. Draft v0.1 — 2026-07-05.*
 

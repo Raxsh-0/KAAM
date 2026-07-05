@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,10 +28,12 @@ import com.kindred.core.data.model.Curated
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProfileScreen(
+    onSignedOut: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val profile by viewModel.profile.collectAsStateWithLifecycle()
+    val saveState by viewModel.saveState.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -84,10 +88,30 @@ fun ProfileScreen(
         }
 
         Spacer(Modifier.height(24.dp))
-        Text(
-            "Saved on this device for now — syncs to your account in Phase 1.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Button(onClick = viewModel::save, enabled = saveState != SaveState.Saving) {
+            Text(
+                when (saveState) {
+                    SaveState.Saving -> "Saving…"
+                    SaveState.Saved -> "Saved ✓"
+                    else -> "Save profile"
+                }
+            )
+        }
+        (saveState as? SaveState.Failed)?.let { failed ->
+            Text(
+                failed.message,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
+        TextButton(onClick = {
+            viewModel.signOut()
+            onSignedOut()
+        }) {
+            Text("Sign out")
+        }
     }
 }

@@ -30,7 +30,7 @@ fun UpdatePrompt() {
             text = {
                 Text(
                     buildString {
-                        append("KAAM ${info.versionName} is out.")
+                        append("Ally ${info.versionName} is out.")
                         if (info.notes.isNotBlank()) append("\n\n${info.notes}")
                     }
                 )

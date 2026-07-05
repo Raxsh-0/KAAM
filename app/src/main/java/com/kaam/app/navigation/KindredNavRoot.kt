@@ -18,7 +18,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.kaam.app.SessionViewModel
 import com.kindred.feature.auth.AuthScreen
 import com.kindred.feature.chat.ChatScreen
 import com.kindred.feature.chat.MatchesScreen
@@ -44,7 +46,7 @@ private val bottomTabs = listOf(
 )
 
 @Composable
-fun KindredNavRoot() {
+fun KindredNavRoot(sessionViewModel: SessionViewModel = hiltViewModel()) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -76,7 +78,7 @@ fun KindredNavRoot() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Routes.AUTH,
+            startDestination = if (sessionViewModel.startSignedIn) Routes.DISCOVERY else Routes.AUTH,
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(Routes.AUTH) {
@@ -94,7 +96,15 @@ fun KindredNavRoot() {
             composable(Routes.MATCHES) {
                 MatchesScreen(onOpenChat = { navController.navigate(Routes.chat(it)) })
             }
-            composable(Routes.PROFILE) { ProfileScreen() }
+            composable(Routes.PROFILE) {
+                ProfileScreen(
+                    onSignedOut = {
+                        navController.navigate(Routes.AUTH) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable(Routes.CHAT) {
                 ChatScreen(onBack = { navController.popBackStack() })
             }
