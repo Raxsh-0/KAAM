@@ -19,6 +19,7 @@ class ProfileRepository @Inject constructor() {
                 "bio" to profile.bio,
                 "intent" to profile.intent,
                 "tags" to profile.tags.toList(),
+                "photoUrl" to profile.photoUrl,
             )
         ).await()
     }
@@ -31,6 +32,7 @@ class ProfileRepository @Inject constructor() {
             bio = snap.getString("bio") ?: "",
             intent = snap.getString("intent") ?: "Open to exploring",
             tags = (snap.get("tags") as? List<*>)?.filterIsInstance<String>()?.toSet() ?: emptySet(),
+            photoUrl = snap.getString("photoUrl"),
         )
     }
 }

@@ -1,6 +1,6 @@
 {
-  "versionCode": 8,
-  "versionName": "0.4.1",
-  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.4.1.apk",
-  "notes": "Added email/password sign-in and sign-up alongside Google. Fixed profile save hanging forever if Firestore is unreachable."
+  "versionCode": 10,
+  "versionName": "0.5.1",
+  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.5.1.apk",
+  "notes": "Profile photos! Tap your avatar in Profile to upload a picture."
 }

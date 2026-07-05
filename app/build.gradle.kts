@@ -18,8 +18,8 @@ android {
         applicationId = "com.kaam.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "0.4.1"
+        versionCode = 10
+        versionName = "0.5.1"
     }
 
     // Signing credentials live in keystore.properties (gitignored, machine-local)
@@ -95,4 +95,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.cloudinary.android)
 }

@@ -16,6 +16,7 @@ data class OwnProfile(
     val bio: String = "",
     val intent: String = "Open to exploring",
     val tags: Set<String> = emptySet(),
+    val photoUrl: String? = null,
 )
 
 data class ChatMessage(
