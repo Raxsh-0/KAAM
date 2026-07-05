@@ -18,8 +18,8 @@ android {
         applicationId = "com.kaam.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "0.3.0"
+        versionCode = 6
+        versionName = "0.3.1"
     }
 
     // Signing credentials live in keystore.properties (gitignored, machine-local)

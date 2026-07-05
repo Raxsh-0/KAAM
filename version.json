@@ -1,6 +1,6 @@
 {
-  "versionCode": 5,
-  "versionName": "0.3.0",
-  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.3.0.apk",
-  "notes": "Renamed to Ally. Real Google sign-in and profile saving are now live."
+  "versionCode": 6,
+  "versionName": "0.3.1",
+  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.3.1.apk",
+  "notes": "Fixed sign-in hanging forever on a slow connection — now times out with a clear message."
 }

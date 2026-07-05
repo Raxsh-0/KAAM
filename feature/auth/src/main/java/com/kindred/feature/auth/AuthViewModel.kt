@@ -13,10 +13,12 @@ import com.kindred.core.data.ProfileRepository
 import com.kindred.core.data.model.OwnProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 sealed interface AuthUiState {
     data object Idle : AuthUiState
@@ -56,10 +58,13 @@ class AuthViewModel @Inject constructor(
                             .build()
                     )
                     .build()
-                val result = CredentialManager.create(activityContext)
-                    .getCredential(activityContext, request)
+                val result = withTimeout(25_000) {
+                    CredentialManager.create(activityContext).getCredential(activityContext, request)
+                }
                 val googleCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
-                val user = authRepository.signInWithGoogleIdToken(googleCredential.idToken)
+                val user = withTimeout(20_000) {
+                    authRepository.signInWithGoogleIdToken(googleCredential.idToken)
+                }
 
                 // Pull the saved profile, or create one from the Google account on first sign-in.
                 val profile = runCatching { profileRepository.load(user.uid) }.getOrNull()
@@ -69,6 +74,8 @@ class AuthViewModel @Inject constructor(
                 localState.ownProfile.value = profile
 
                 _state.value = AuthUiState.SignedIn
+            } catch (e: TimeoutCancellationException) {
+                _state.value = AuthUiState.Error("Sign-in timed out. Check your connection and try again.")
             } catch (e: Exception) {
                 _state.value = AuthUiState.Error(e.message ?: "Sign-in failed. Try again.")
             }
