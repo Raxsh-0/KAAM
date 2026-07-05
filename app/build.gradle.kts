@@ -18,8 +18,8 @@ android {
         applicationId = "com.ally.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 12
-        versionName = "0.7.0"
+        versionCode = 13
+        versionName = "0.8.0"
     }
 
     // Signing credentials live in keystore.properties (gitignored, machine-local)

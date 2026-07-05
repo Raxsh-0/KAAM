@@ -20,6 +20,14 @@ data class OwnProfile(
     val onboardingComplete: Boolean = false,
 )
 
+data class AdminProfileRow(
+    val uid: String,
+    val name: String,
+    val bio: String,
+    val intent: String,
+    val photoUrl: String?,
+)
+
 data class ChatMessage(
     val id: Long,
     val fromMe: Boolean,

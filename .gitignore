@@ -13,3 +13,4 @@ captures/
 *.keystore
 keystore.properties
 google-services.json
+admin.properties

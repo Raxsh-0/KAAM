@@ -1,3 +1,4 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,12 +8,24 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+// Admin email lives in a gitignored local file (repo is public) — same pattern as
+// keystore.properties. Empty string if missing, which just disables the admin panel.
+val adminProps = Properties().apply {
+    val f = rootProject.file("admin.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+
 android {
     namespace = "com.kindred.core.data"
     compileSdk = 36
 
     defaultConfig {
         minSdk = 26
+        buildConfigField("String", "ADMIN_EMAIL", "\"${adminProps.getProperty("adminEmail", "")}\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {

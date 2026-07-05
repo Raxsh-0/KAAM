@@ -14,8 +14,9 @@ class AuthRepository @Inject constructor() {
 
     val currentUser: FirebaseUser? get() = auth.currentUser
 
-    /** Uid of the signed-in user, without exposing Firebase types to feature modules. */
+    /** Uid/email of the signed-in user, without exposing Firebase types to feature modules. */
     val currentUid: String? get() = auth.currentUser?.uid
+    val currentUserEmail: String? get() = auth.currentUser?.email
 
     suspend fun signInWithGoogleIdToken(idToken: String): FirebaseUser {
         val credential = GoogleAuthProvider.getCredential(idToken, null)

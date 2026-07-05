@@ -51,6 +51,7 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     isOnboarding: Boolean = false,
     onOnboardingComplete: () -> Unit = {},
+    onOpenAdmin: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val profile by viewModel.profile.collectAsStateWithLifecycle()
@@ -182,6 +183,12 @@ fun ProfileScreen(
         }
 
         if (!isOnboarding) {
+            if (viewModel.isAdmin) {
+                Spacer(Modifier.height(16.dp))
+                TextButton(onClick = onOpenAdmin) {
+                    Text("Admin panel")
+                }
+            }
             Spacer(Modifier.height(16.dp))
             TextButton(onClick = {
                 viewModel.signOut()

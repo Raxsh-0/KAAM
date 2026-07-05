@@ -22,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.ally.app.SessionViewModel
 import com.kindred.feature.auth.AuthScreen
+import com.kindred.feature.profile.AdminScreen
 import com.kindred.feature.chat.ChatScreen
 import com.kindred.feature.chat.MatchesScreen
 import com.kindred.feature.discovery.DiscoveryScreen
@@ -33,6 +34,7 @@ object Routes {
     const val DISCOVERY = "discovery"
     const val MATCHES = "matches"
     const val PROFILE = "profile"
+    const val ADMIN = "admin"
     const val CHAT = "chat/{profileId}"
 
     fun chat(profileId: String) = "chat/$profileId"
@@ -115,8 +117,12 @@ fun KindredNavRoot(sessionViewModel: SessionViewModel = hiltViewModel()) {
                         navController.navigate(Routes.AUTH) {
                             popUpTo(0) { inclusive = true }
                         }
-                    }
+                    },
+                    onOpenAdmin = { navController.navigate(Routes.ADMIN) },
                 )
+            }
+            composable(Routes.ADMIN) {
+                AdminScreen(onBack = { navController.popBackStack() })
             }
             composable(Routes.CHAT) {
                 ChatScreen(onBack = { navController.popBackStack() })
