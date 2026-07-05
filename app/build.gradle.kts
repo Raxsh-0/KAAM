@@ -11,15 +11,15 @@ plugins {
 }
 
 android {
-    namespace = "com.kaam.app"
+    namespace = "com.ally.app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.kaam.app"
+        applicationId = "com.ally.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 10
-        versionName = "0.5.1"
+        versionCode = 11
+        versionName = "0.6.0"
     }
 
     // Signing credentials live in keystore.properties (gitignored, machine-local)

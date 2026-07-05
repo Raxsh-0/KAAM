@@ -1,6 +1,6 @@
 {
-  "versionCode": 10,
-  "versionName": "0.5.1",
-  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.5.1.apk",
-  "notes": "Profile photos! Tap your avatar in Profile to upload a picture."
+  "versionCode": 11,
+  "versionName": "0.6.0",
+  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.6.0.apk",
+  "notes": "This update installs as a separate new app (its internal ID changed) rather than replacing this one. After installing, open the new app, sign up again, and uninstall this old copy. Firestore save/load is now reliable on the new backend."
 }
