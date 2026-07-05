@@ -29,6 +29,7 @@ import com.kindred.feature.profile.ProfileScreen
 
 object Routes {
     const val AUTH = "auth"
+    const val ONBOARDING = "onboarding"
     const val DISCOVERY = "discovery"
     const val MATCHES = "matches"
     const val PROFILE = "profile"
@@ -84,10 +85,22 @@ fun KindredNavRoot(sessionViewModel: SessionViewModel = hiltViewModel()) {
             composable(Routes.AUTH) {
                 AuthScreen(
                     onSignedIn = {
-                        navController.navigate(Routes.DISCOVERY) {
+                        val next = if (sessionViewModel.needsOnboarding()) Routes.ONBOARDING else Routes.DISCOVERY
+                        navController.navigate(next) {
                             popUpTo(Routes.AUTH) { inclusive = true }
                         }
                     }
+                )
+            }
+            composable(Routes.ONBOARDING) {
+                ProfileScreen(
+                    isOnboarding = true,
+                    onOnboardingComplete = {
+                        navController.navigate(Routes.DISCOVERY) {
+                            popUpTo(Routes.ONBOARDING) { inclusive = true }
+                        }
+                    },
+                    onSignedOut = {},
                 )
             }
             composable(Routes.DISCOVERY) {

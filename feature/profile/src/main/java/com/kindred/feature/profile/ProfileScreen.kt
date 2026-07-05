@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,8 @@ import com.kindred.core.data.model.Curated
 fun ProfileScreen(
     onSignedOut: () -> Unit,
     modifier: Modifier = Modifier,
+    isOnboarding: Boolean = false,
+    onOnboardingComplete: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val profile by viewModel.profile.collectAsStateWithLifecycle()
@@ -58,13 +61,20 @@ fun ProfileScreen(
         contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri -> uri?.let(viewModel::uploadPhoto) }
 
+    LaunchedEffect(isOnboarding, saveState) {
+        if (isOnboarding && saveState == SaveState.Saved) onOnboardingComplete()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
-        Text("Your profile", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            if (isOnboarding) "Set up your profile" else "Your profile",
+            style = MaterialTheme.typography.headlineMedium,
+        )
         Spacer(Modifier.height(16.dp))
 
         Box(
@@ -149,11 +159,15 @@ fun ProfileScreen(
         }
 
         Spacer(Modifier.height(24.dp))
-        Button(onClick = viewModel::save, enabled = saveState != SaveState.Saving) {
+        Button(
+            onClick = { if (isOnboarding) viewModel.completeOnboarding() else viewModel.save() },
+            enabled = saveState != SaveState.Saving && (!isOnboarding || profile.name.isNotBlank()),
+        ) {
             Text(
-                when (saveState) {
-                    SaveState.Saving -> "Saving…"
-                    SaveState.Saved -> "Saved ✓"
+                when {
+                    saveState == SaveState.Saving -> "Saving…"
+                    saveState == SaveState.Saved && !isOnboarding -> "Saved ✓"
+                    isOnboarding -> "Continue"
                     else -> "Save profile"
                 }
             )
@@ -167,12 +181,14 @@ fun ProfileScreen(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
-        TextButton(onClick = {
-            viewModel.signOut()
-            onSignedOut()
-        }) {
-            Text("Sign out")
+        if (!isOnboarding) {
+            Spacer(Modifier.height(16.dp))
+            TextButton(onClick = {
+                viewModel.signOut()
+                onSignedOut()
+            }) {
+                Text("Sign out")
+            }
         }
     }
 }

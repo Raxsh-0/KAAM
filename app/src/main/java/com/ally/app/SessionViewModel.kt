@@ -13,10 +13,13 @@ import kotlinx.coroutines.launch
 class SessionViewModel @Inject constructor(
     authRepository: AuthRepository,
     profileRepository: ProfileRepository,
-    localState: MockDatingRepository,
+    private val localState: MockDatingRepository,
 ) : ViewModel() {
 
     val startSignedIn: Boolean = authRepository.currentUser != null
+
+    /** Read right after a sign-in/sign-up completes, once hydrateProfile has set local state. */
+    fun needsOnboarding(): Boolean = !localState.ownProfile.value.onboardingComplete
 
     init {
         // Returning user: hydrate the local profile from Firestore in the background.

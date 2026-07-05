@@ -86,18 +86,17 @@ class AuthViewModel @Inject constructor(
     }
 
     /**
-     * Firestore is best-effort here: a broken/misconfigured backend must never block sign-in,
-     * so every call is time-boxed and failures just fall back to a local-only profile.
+     * Nothing is written to Firestore here — a brand-new profile stays local-only
+     * (onboardingComplete = false) until the onboarding screen saves it for real.
+     * Firestore is also best-effort: a broken/misconfigured backend must never block
+     * sign-in, so the load is time-boxed and failure just falls back to a local default.
      */
     private suspend fun hydrateProfile(user: FirebaseUser, fallbackName: String, forceCreate: Boolean = false) {
-        suspend fun trySave(profile: OwnProfile) =
-            runCatching { withTimeout(8_000) { profileRepository.save(user.uid, profile) } }
-
         val profile = if (forceCreate) {
-            OwnProfile(name = fallbackName).also { trySave(it) }
+            OwnProfile(name = fallbackName)
         } else {
-            val loaded = runCatching { withTimeout(8_000) { profileRepository.load(user.uid) } }.getOrNull()
-            loaded ?: OwnProfile(name = fallbackName).also { trySave(it) }
+            runCatching { withTimeout(8_000) { profileRepository.load(user.uid) } }.getOrNull()
+                ?: OwnProfile(name = fallbackName)
         }
         localState.ownProfile.value = profile
     }

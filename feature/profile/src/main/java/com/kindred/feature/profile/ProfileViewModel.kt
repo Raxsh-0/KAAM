@@ -93,6 +93,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun completeOnboarding() {
+        edit { it.copy(onboardingComplete = true) }
+        save()
+    }
+
     fun signOut() {
         authRepository.signOut()
         localState.ownProfile.value = OwnProfile()

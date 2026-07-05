@@ -20,6 +20,7 @@ class ProfileRepository @Inject constructor() {
                 "intent" to profile.intent,
                 "tags" to profile.tags.toList(),
                 "photoUrl" to profile.photoUrl,
+                "onboardingComplete" to profile.onboardingComplete,
             )
         ).await()
     }
@@ -33,6 +34,7 @@ class ProfileRepository @Inject constructor() {
             intent = snap.getString("intent") ?: "Open to exploring",
             tags = (snap.get("tags") as? List<*>)?.filterIsInstance<String>()?.toSet() ?: emptySet(),
             photoUrl = snap.getString("photoUrl"),
+            onboardingComplete = snap.getBoolean("onboardingComplete") ?: false,
         )
     }
 }

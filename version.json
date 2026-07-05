@@ -1,6 +1,6 @@
 {
-  "versionCode": 11,
-  "versionName": "0.6.0",
-  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.6.0.apk",
-  "notes": "This update installs as a separate new app (its internal ID changed) rather than replacing this one. After installing, open the new app, sign up again, and uninstall this old copy. Firestore save/load is now reliable on the new backend."
+  "versionCode": 12,
+  "versionName": "0.7.0",
+  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.7.0.apk",
+  "notes": "New accounts now set up their profile (photo, bio, intent, interests) right after signing up, before seeing the swipe deck — like every other dating app. If you signed up before this update, you'll see the setup screen once more (pre-filled with your existing info) — just tap Continue."
 }
