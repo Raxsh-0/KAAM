@@ -1,6 +1,6 @@
 {
-  "versionCode": 14,
-  "versionName": "0.9.0",
-  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.9.0.apk",
-  "notes": "Real app icon! Replaced the default placeholder icon with the actual Ally logo, both as a standard icon and a proper adaptive icon for modern phone launchers."
+  "versionCode": 15,
+  "versionName": "0.10.0",
+  "apkUrl": "https://raw.githubusercontent.com/Raxsh-0/KAAM/main/releases/Ally-0.10.0.apk",
+  "notes": "New: Premium. Skip the swiping — our team personally reviews and prioritizes genuine, compatible people for you, for ₹99. Find it in the new Premium tab."
 }

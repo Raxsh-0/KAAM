@@ -52,6 +52,7 @@ fun ProfileScreen(
     isOnboarding: Boolean = false,
     onOnboardingComplete: () -> Unit = {},
     onOpenAdmin: () -> Unit = {},
+    onOpenPremiumAdmin: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val profile by viewModel.profile.collectAsStateWithLifecycle()
@@ -187,6 +188,9 @@ fun ProfileScreen(
                 Spacer(Modifier.height(16.dp))
                 TextButton(onClick = onOpenAdmin) {
                     Text("Admin panel")
+                }
+                TextButton(onClick = onOpenPremiumAdmin) {
+                    Text("Premium requests")
                 }
             }
             Spacer(Modifier.height(16.dp))

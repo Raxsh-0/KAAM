@@ -18,8 +18,8 @@ android {
         applicationId = "com.ally.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 14
-        versionName = "0.9.0"
+        versionCode = 15
+        versionName = "0.10.0"
     }
 
     // Signing credentials live in keystore.properties (gitignored, machine-local)
@@ -76,6 +76,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:discovery"))
     implementation(project(":feature:chat"))
+    implementation(project(":feature:premium"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -96,4 +97,5 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.cloudinary.android)
+    implementation(libs.razorpay.checkout)
 }

@@ -57,4 +57,25 @@ class ProfileRepository @Inject constructor() {
     suspend fun deleteProfile(uid: String) {
         db.collection("users").document(uid).delete().await()
     }
+
+    /** Used by both the admin curation picker and a customer's "Curated for you" screen. */
+    suspend fun getProfilesByUids(uids: List<String>): List<AdminProfileRow> {
+        if (uids.isEmpty()) return emptyList()
+        // Firestore whereIn caps at 30 values; premium lists are small in practice, but
+        // chunk defensively rather than fail outright if one ever grows past that.
+        return uids.chunked(30).flatMap { chunk ->
+            db.collection("users")
+                .whereIn(com.google.firebase.firestore.FieldPath.documentId(), chunk)
+                .get().await()
+                .documents.map { doc ->
+                    AdminProfileRow(
+                        uid = doc.id,
+                        name = doc.getString("name") ?: "?",
+                        bio = doc.getString("bio") ?: "",
+                        intent = doc.getString("intent") ?: "",
+                        photoUrl = doc.getString("photoUrl"),
+                    )
+                }
+        }
+    }
 }

@@ -8,8 +8,9 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
-// Admin email lives in a gitignored local file (repo is public) — same pattern as
-// keystore.properties. Empty string if missing, which just disables the admin panel.
+// Admin/curator emails live in a gitignored local file (repo is public) — same pattern
+// as keystore.properties. Empty if missing, which just disables the admin panel.
+// Comma-separated so more than one curator (e.g. a matchmaking partner) can be added.
 val adminProps = Properties().apply {
     val f = rootProject.file("admin.properties")
     if (f.exists()) f.inputStream().use { load(it) }
@@ -21,7 +22,7 @@ android {
 
     defaultConfig {
         minSdk = 26
-        buildConfigField("String", "ADMIN_EMAIL", "\"${adminProps.getProperty("adminEmail", "")}\"")
+        buildConfigField("String", "ADMIN_EMAILS", "\"${adminProps.getProperty("adminEmails", "")}\"")
     }
 
     buildFeatures {

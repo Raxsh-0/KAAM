@@ -41,7 +41,7 @@ class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     val profile: StateFlow<OwnProfile> = localState.ownProfile
-    val isAdmin: Boolean = authRepository.currentUserEmail == AdminConfig.ADMIN_EMAIL
+    val isAdmin: Boolean = AdminConfig.isAdmin(authRepository.currentUserEmail)
 
     private val _saveState = MutableStateFlow<SaveState>(SaveState.Idle)
     val saveState: StateFlow<SaveState> = _saveState.asStateFlow()

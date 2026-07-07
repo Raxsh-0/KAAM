@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,9 +24,11 @@ import androidx.navigation.compose.rememberNavController
 import com.ally.app.SessionViewModel
 import com.kindred.feature.auth.AuthScreen
 import com.kindred.feature.profile.AdminScreen
+import com.kindred.feature.profile.PremiumAdminScreen
 import com.kindred.feature.chat.ChatScreen
 import com.kindred.feature.chat.MatchesScreen
 import com.kindred.feature.discovery.DiscoveryScreen
+import com.kindred.feature.premium.PremiumScreen
 import com.kindred.feature.profile.ProfileScreen
 
 object Routes {
@@ -34,7 +37,9 @@ object Routes {
     const val DISCOVERY = "discovery"
     const val MATCHES = "matches"
     const val PROFILE = "profile"
+    const val PREMIUM = "premium"
     const val ADMIN = "admin"
+    const val PREMIUM_ADMIN = "premium_admin"
     const val CHAT = "chat/{profileId}"
 
     fun chat(profileId: String) = "chat/$profileId"
@@ -45,6 +50,7 @@ private data class BottomTab(val route: String, val label: String, val icon: Ima
 private val bottomTabs = listOf(
     BottomTab(Routes.DISCOVERY, "Discover", Icons.Filled.Search),
     BottomTab(Routes.MATCHES, "Matches", Icons.Filled.Favorite),
+    BottomTab(Routes.PREMIUM, "Premium", Icons.Filled.Star),
     BottomTab(Routes.PROFILE, "Profile", Icons.Filled.Person),
 )
 
@@ -111,6 +117,9 @@ fun KindredNavRoot(sessionViewModel: SessionViewModel = hiltViewModel()) {
             composable(Routes.MATCHES) {
                 MatchesScreen(onOpenChat = { navController.navigate(Routes.chat(it)) })
             }
+            composable(Routes.PREMIUM) {
+                PremiumScreen()
+            }
             composable(Routes.PROFILE) {
                 ProfileScreen(
                     onSignedOut = {
@@ -119,10 +128,14 @@ fun KindredNavRoot(sessionViewModel: SessionViewModel = hiltViewModel()) {
                         }
                     },
                     onOpenAdmin = { navController.navigate(Routes.ADMIN) },
+                    onOpenPremiumAdmin = { navController.navigate(Routes.PREMIUM_ADMIN) },
                 )
             }
             composable(Routes.ADMIN) {
                 AdminScreen(onBack = { navController.popBackStack() })
+            }
+            composable(Routes.PREMIUM_ADMIN) {
+                PremiumAdminScreen(onBack = { navController.popBackStack() })
             }
             composable(Routes.CHAT) {
                 ChatScreen(onBack = { navController.popBackStack() })
